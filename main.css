@@ -1,0 +1,17 @@
+#searchFunc{
+    display: flex;
+    justify-content: center;   
+    color: #000000
+}
+
+img{
+    background-image: cross-fade(1);
+    display: block;
+
+}
+
+.center-block {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+ }

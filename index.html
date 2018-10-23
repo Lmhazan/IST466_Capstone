@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Capstone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script type="text/javascript" src="main.js"></script>
+    <script type="JSON" src="Code_violations.json"></script>
+</head>
+<body onload="load()">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="about_tab" data-toggle="tab" href="#about" role="tab" aria-controls="about" aria-selected="false">About Us</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">...</div>
+        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+      </div>
+      <div class="background">
+
+          <div class="span1"><img class="center-block" src="geo_map_pic.jpg"> </div>
+      </div>
+
+    
+    <div id="searchFunc">
+        <form id="searchForm">
+        <input type="text" placeholder="Search...">
+        </form>
+
+        <script> 
+        function getQuery(e){
+            e.preventDefault();
+            
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+                var violation_status = JSON.parse(xhttp.responseText);
+                console.log(violation_status);
+            }
+   
+        }
+        xhttp.open('GET', 'https://services6.arcgis.com/bdPqSfflsdgFRVVM/arcgis/rest/services/Code_violations/FeatureServer/0/query?where=1%3D1&outFields=violation_status,case_number,owner_address,owner_zip,owner_state,case_type&outSR=4326&f=json', true);
+        xhttp.send();
+        }
+
+
+
+        document.getElementById('searchForm').addEventListener('submit', getQuery, false);
+        </script>
+    </div>
+</body>
+</html>
+
+
+
+
+
+// (function(){
+    //     var rentLogicAPI = "https://opendata.arcgis.com/datasets/fb7233117df1443081541f220327f178_0.geojson";
+    //     $.getJSON (rentLogicAPI, {
+    //         tags: 'violation_status',
+    //         tagmode: 'any',
+    //         format: "json"
+    //     })
+
+    //     .done(function( data ){
+    //         $.each(data.items, function(i, item) {
+    //             $("<property_address>").appendTo("#searchFunc");
+    //                 if ( i===3) {
+    //                     return false;
+    //                 }
+    //         })
+    //     })
+    // })
