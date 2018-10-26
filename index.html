@@ -9,9 +9,25 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <script type="text/javascript" src="main.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="JSON" src="Code_violations.json"></script>
+
+    <script>
+        $(document).ready(function(){    
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+                var violation_status = JSON.parse(xhttp.responseText);
+                console.log(violation_status);
+            }
+
+        }
+        xhttp.open('GET', 'https://services6.arcgis.com/bdPqSfflsdgFRVVM/arcgis/rest/services/Code_violations/FeatureServer/0/query?where=1%3D1&outFields=violation_status,case_number,owner_address,owner_zip,owner_state,case_type&outSR=4326&f=json', true);
+            xhttp.send();
+        });
+    </script>
 </head>
-<body onload="load()">
+<body>
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item">
           <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
@@ -30,7 +46,7 @@
       </div>
       <div class="background">
 
-          <div class="span1"><img class="center-block" src="geo_map_pic.jpg"> </div>
+          <div class="span1"><img class="center-block" src="syracuse.jpg" width="900px"> </div>
       </div>
 
     
@@ -38,49 +54,27 @@
         <form id="searchForm">
         <input type="text" placeholder="Search...">
         </form>
+    </div>
+    </div>
 
-        <script> 
-        function getQuery(e){
-            e.preventDefault();
-            
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-            if (xhttp.readyState == 4 && xhttp.status == 200) {
-                var violation_status = JSON.parse(xhttp.responseText);
-                console.log(violation_status);
-            }
-   
-        }
-        xhttp.open('GET', 'https://services6.arcgis.com/bdPqSfflsdgFRVVM/arcgis/rest/services/Code_violations/FeatureServer/0/query?where=1%3D1&outFields=violation_status,case_number,owner_address,owner_zip,owner_state,case_type&outSR=4326&f=json', true);
-        xhttp.send();
-        }
-
-
-
-        document.getElementById('searchForm').addEventListener('submit', getQuery, false);
-        </script>
+    <div>
+        <table class="table">
+                    <col align="left">
+                    <col align="right">
+                    <col align="right">
+                    <tr>
+                      <th>Address Name</th>
+                      <th>Case Type</th>
+                      <th>Violation Status</th>
+                    </tr>
+                    <tr>
+                      <td>1205 Harrison Street</td>
+                      <td>"SPCC - Section 27-72 (f) - Overgrowth</td>
+                      <td>Open</td>
+                    </tr>
+                  </table>
     </div>
 </body>
 </html>
 
 
-
-
-
-// (function(){
-    //     var rentLogicAPI = "https://opendata.arcgis.com/datasets/fb7233117df1443081541f220327f178_0.geojson";
-    //     $.getJSON (rentLogicAPI, {
-    //         tags: 'violation_status',
-    //         tagmode: 'any',
-    //         format: "json"
-    //     })
-
-    //     .done(function( data ){
-    //         $.each(data.items, function(i, item) {
-    //             $("<property_address>").appendTo("#searchFunc");
-    //                 if ( i===3) {
-    //                     return false;
-    //                 }
-    //         })
-    //     })
-    // })
