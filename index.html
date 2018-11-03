@@ -13,18 +13,91 @@
     <script type="JSON" src="Code_violations.json"></script>
 
     <script>
-        $(document).ready(function(){    
+        // This function sends the AJAX call to retreive JSON data from the API
+        // query variable is passed to the URL so that it retrieves all data with query as a name
+        // (it does pattern matching so query doesn't need to be exact)
+        function queryData(query) {
             var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-            if (xhttp.readyState == 4 && xhttp.status == 200) {
-                var violation_status = JSON.parse(xhttp.responseText);
-                console.log(violation_status);
+            var violation_status;
+            xhttp.onreadystatechange = function () {
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+                    violation_status = JSON.parse(xhttp.responseText);
+
+                    // once the call is successful, pass the features data to mapData
+                    mapData(violation_status.features);
+                }
+            }
+            xhttp.open('GET', 'https://services6.arcgis.com/bdPqSfflsdgFRVVM/arcgis/rest/services/Code_violations/FeatureServer/0/query?where=UPPER(property_address)%20like%20%27%25' + query + '%25%27&outFields=property_address,property_zip,property_id,violation_name,violation_date,violation_status,case_number,case_type&returnGeometry=false&outSR=4326&f=json', true);
+            xhttp.send();
+        }
+        var isSearchSubmitted = false;
+        // since AJAX calls reload the page each time, this function is called after each search
+        $(document).ready(function () {
+            // set isSearchSubmitted to true (so that only search data is returned instead of all)
+            document.getElementById('searchForm').onsubmit = function () {
+                // query API given the inputted search
+                isSearchSubmitted = true;
+                var query = document.getElementById('searchInput').value;
+                queryData(query);
             }
 
-        }
-        xhttp.open('GET', 'https://services6.arcgis.com/bdPqSfflsdgFRVVM/arcgis/rest/services/Code_violations/FeatureServer/0/query?where=1%3D1&outFields=violation_status,case_number,owner_address,owner_zip,owner_state,case_type&outSR=4326&f=json', true);
-            xhttp.send();
+            if (!isSearchSubmitted) {
+                queryData('');
+            }
         });
+
+        // Use this function to display all data in the table
+        function mapData(data) {
+            // store each house information into the houses array
+            var houses = [];
+
+            // get the table elements
+            var tr, td;
+            var tbody = document.getElementById('table_body');
+            // reset the HTML in the table body so that each call is independent
+            tbody.innerHTML = '';
+
+            // iterate through data, and store all attributes into houses array
+            for (var k in data) {
+                houses[k] = data[k].attributes;
+                console.log(houses[k]);
+            }
+
+            // if houses is empty (meaning no data was found),
+            // display an error message
+            if (houses.length == 0) {
+                // console.log('no data to display');
+                tbody.innerHTML = '<h2>No Code Violations Found.<h2>';
+            }
+            // otherwise, iterate through houses and map each value to the table
+            else {
+                for (var k in houses) {
+                    // puts address, case type, and violation statues into each table row cell
+                    tr = tbody.insertRow(tbody.rows.length);
+                    td = tr.insertCell(tr.cells.length);
+                    td.innerHTML = houses[k].property_address;
+
+                    td = tr.insertCell(tr.cells.length);
+                    td.innerHTML = houses[k].case_type;
+                    td = tr.insertCell(tr.cells.length);
+
+                    var date = new Date(houses[k].violation_date);
+                    var month = date.getUTCMonth() + 1; //months from 1-12
+                    var day = date.getUTCDate();
+                    var year = date.getUTCFullYear();
+                    td.innerHTML = month + "/" + day + "/" + year;
+                    td = tr.insertCell(tr.cells.length);
+
+                    td.innerHTML = houses[k].violation_status;
+                    // insert row
+                    td = tr.insertCell(tr.cells.length);
+
+  
+                }
+            }
+        }
+
+    
     </script>
 </head>
 <body>
@@ -52,7 +125,7 @@
     
     <div id="searchFunc">
         <form id="searchForm">
-        <input type="text" placeholder="Search...">
+            <input type="text" id='searchInput' placeholder="Search...">
         </form>
     </div>
     </div>
@@ -62,16 +135,20 @@
                     <col align="left">
                     <col align="right">
                     <col align="right">
-                    <tr>
-                      <th>Address Name</th>
-                      <th>Case Type</th>
-                      <th>Violation Status</th>
-                    </tr>
-                    <tr>
-                      <td>1205 Harrison Street</td>
-                      <td>"SPCC - Section 27-72 (f) - Overgrowth</td>
-                      <td>Open</td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>Address Name</th>
+                            <th>Case Type</th>
+                            <th>Violation date</th>
+                            <th>Violation Status</th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody id="table_body">
+
+                    </tbody>
+             
                   </table>
     </div>
 </body>
